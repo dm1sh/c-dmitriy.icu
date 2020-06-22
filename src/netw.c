@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <netdb.h>
 
+#include "../include/netw.h"
 #include "../include/utils.h"
 
 #define BACKLOG 10
@@ -73,7 +74,12 @@ int get_listener_socket(char *port)
 
     return sockfd;
 }
-
+/** 
+ * @brief Get address from sockaddr structure
+ * 
+ * @param {struct sockaddr*} sa
+ * @return void*
+*/
 void *get_in_addr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET) {

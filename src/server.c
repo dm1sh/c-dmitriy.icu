@@ -5,11 +5,52 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h> 
+#include <unistd.h>
 #include <netdb.h>
 
 #include "../include/netw.h"
 #include "../include/utils.h"
+#include "../include/request.h"
+
+void handle_connection(int fd)
+{
+    const size_t request_buffer_size = 512;
+    char request[request_buffer_size];
+    char *prt;
+
+    int bytes_recv = recv(fd, request, request_buffer_size - 1, 0);
+
+    if (bytes_recv < 0)
+    {
+        err_msg("failed to receive a request from server");
+        return;
+    }
+
+    // printf("Request:\n%s---\n", request);
+
+    prt = strstr(request, " HTTP/");
+    if (prt == NULL)
+    {
+        err_msg("non-HTTP request received");
+    }
+    else
+    {
+        if (strncmp(request, "GET ", 4) == 0)
+        {
+            handle_get_request(fd, request);
+        }
+        else if (strncmp(request, "POST ", 5) == 0)
+        {
+            handle_post_request(fd, request);
+        }
+        else
+        {
+            err_msg("unknown request");
+        }
+    }
+    close(fd);
+}
+
 /**
   * Main
   */
@@ -44,22 +85,22 @@ int main(int argc, char *argv[])
             err_msg("couldn't accept client connection");
             continue;
         }
-        
+
+        inet_ntop(cli_addr.ss_family, get_in_addr((struct sockaddr *)&cli_addr), s, sizeof s);
+        printf("\nGot connection from %s\n", s);
+
         // | Doesn't work properly yet
         // v
 
         int pid = fork();
-        
+
         if (pid < 0)
             err_msg("fork failed");
         else if (pid == 0)
         {
             close(listenfd);
-        
-            inet_ntop(cli_addr.ss_family, get_in_addr((struct sockaddr *)&cli_addr), s, sizeof s);
-            printf("Got connection from %s\n", s);
-        
-            // connection(client_fd); // Implement
+
+            handle_connection(client_fd); // Implement
             exit(0);
         }
         else
