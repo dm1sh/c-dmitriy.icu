@@ -12,6 +12,11 @@
 #include "../include/utils.h"
 #include "../include/request.h"
 
+/**
+ * @brief Handle client connection
+ * 
+ * @param fd 
+ */
 void handle_connection(int fd)
 {
     const size_t request_buffer_size = 512;
@@ -89,9 +94,6 @@ int main(int argc, char *argv[])
         inet_ntop(cli_addr.ss_family, get_in_addr((struct sockaddr *)&cli_addr), s, sizeof s);
         printf("\nGot connection from %s\n", s);
 
-        // | Doesn't work properly yet
-        // v
-
         int pid = fork();
 
         if (pid < 0)
@@ -100,7 +102,7 @@ int main(int argc, char *argv[])
         {
             close(listenfd);
 
-            handle_connection(client_fd); // Implement
+            handle_connection(client_fd);
             exit(0);
         }
         else
