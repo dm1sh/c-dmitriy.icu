@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <stdlib.h>
-
-#include "../include/utils.h"
+#include "../../include/utils_op/utils.h"
 
 /** 
  * @brief Prints error
@@ -29,7 +24,7 @@ char *add_to_front(char **str1, char *str2)
     strcpy(*str1, str2);
     strcat(*str1, tmp);
 
-    free(tmp);
+    // free(tmp);
 
     return *str1;
 }

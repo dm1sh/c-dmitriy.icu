@@ -1,11 +1,5 @@
-#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <netdb.h>
-
-#include "../include/netw.h"
-#include "../include/utils.h"
+#include "../../include/netw_op/netw.h"
+#include "../../include/utils_op/utils.h"
 
 #define BACKLOG 10
 
@@ -74,6 +68,7 @@ int get_listener_socket(char *port)
 
     return sockfd;
 }
+
 /** 
  * @brief Get address from sockaddr structure
  * 

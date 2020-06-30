@@ -1,7 +1,5 @@
-#include <string.h>
-
-#include "../include/mime.h"
-#include "../include/utils.h"
+#include "../../include/file_op/mime.h"
+#include "../../include/utils_op/utils.h"
 
 #define DEFAULT_mime_TYPE "application/octet-stream"
 

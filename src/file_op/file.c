@@ -1,12 +1,5 @@
-#include <string.h>
-#include <stdlib.h>
-#include <sys/sendfile.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-
-#include "../include/file.h"
-#include "../include/utils.h"
+#include "../../include/file_op/file.h"
+#include "../../include/utils_op/utils.h"
 
 /**
  * @brief Generate file path from request path provided
@@ -16,22 +9,22 @@
  */
 char *gen_file_path(char *req_path)
 {
-    char *path = (char *)malloc(sizeof req_path);
+    char *path = (char *)malloc(strlen(req_path) + 1);
     strcpy(path, req_path);
     if (strchr(req_path, '.') == NULL)
     {
         if (req_path[strlen(req_path) - 1] != '/')
         {
-            path = realloc(path, sizeof path + 1);
+            path = realloc(path, strlen(path) + 1);
             path = strcat(path, "/");
         }
-        path = realloc(path, sizeof path + sizeof "index.html");
+        path = realloc(path, strlen(path) + strlen("index.html") + 1);
         path = strcat(path, "index.html");
     }
 
     char *webroot = "static";
 
-    path = realloc(path, sizeof path + sizeof webroot);
+    path = realloc(path, strlen(path) + strlen(webroot));
     path = add_to_front(&path, webroot);
 
     return path;
@@ -47,7 +40,7 @@ char *gen_file_path(char *req_path)
 int send_file(int cli_fd, struct file_s *file)
 {
     off_t offset = 0;
-    if (sendfile(cli_fd, file->fd, &offset, file->size+2) < 0)
+    if (sendfile(cli_fd, file->fd, &offset, file->size + 2) < 0)
     {
         return -1;
     }

@@ -8,9 +8,9 @@
 #include <unistd.h>
 #include <netdb.h>
 
-#include "../include/netw.h"
-#include "../include/utils.h"
-#include "../include/request.h"
+#include "../include/netw_op/netw.h"
+#include "../include/utils_op/utils.h"
+#include "../include/netw_op/request.h"
 
 /**
  * @brief Handle client connection
@@ -19,7 +19,7 @@
  */
 void handle_connection(int fd)
 {
-    const size_t request_buffer_size = 512;
+    const size_t request_buffer_size = 1024;
     char request[request_buffer_size];
     char *prt;
 
@@ -31,7 +31,7 @@ void handle_connection(int fd)
         return;
     }
 
-    // printf("Request:\n%s---\n", request);
+    // printf("\nRequest:\n%s---\n", request);
 
     prt = strstr(request, " HTTP/");
     if (prt == NULL)
@@ -42,10 +42,12 @@ void handle_connection(int fd)
     {
         if (strncmp(request, "GET ", 4) == 0)
         {
+            memmove(request, request + 4, strlen(request) - 3);
             handle_get_request(fd, request);
         }
         else if (strncmp(request, "POST ", 5) == 0)
         {
+            memmove(request, request + 5, strlen(request) - 4);
             handle_post_request(fd, request);
         }
         else
@@ -97,7 +99,10 @@ int main(int argc, char *argv[])
         int pid = fork();
 
         if (pid < 0)
+        {
             err_msg("fork failed");
+            close(client_fd);
+        }
         else if (pid == 0)
         {
             close(listenfd);

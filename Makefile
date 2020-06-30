@@ -1,32 +1,29 @@
-CPPFLAGS := -Iinclude -MMD -MP
-CFLAGS   := -Wall
-LDFLAGS  := -Llib
-LDLIBS   := -lm
+TARGET_EXEC ?= server
 
-SRC_DIR := src
-OBJ_DIR := obj
-BIN_DIR := bin
+BUILD_DIR ?= ./build
+SRC_DIRS ?= ./src
 
-EXE := $(BIN_DIR)/server
+SRCS := $(shell find $(SRC_DIRS) -name *.c)
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
+DEPS := $(OBJS:.o=.d)
 
-SRC := $(wildcard $(SRC_DIR)/*.c)
+INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+CPPFLAGS ?= $(INC_FLAGS) -MMD -MP
 
-all: $(EXE)
+$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+	$(CC) $(OBJS) -o $@ $(LDFLAGS)
 
-$(EXE): $(OBJ) | $(BIN_DIR)
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+$(BUILD_DIR)/%.c.o: %.c
+	$(MKDIR_P) $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-$(BIN_DIR) $(OBJ_DIR):
-	mkdir -p $@
+.PHONY: clean
 
-clean: 
-	@$(RM) -rv $(BIN_DIR) $(OBJ_DIR)
+clean:
+	$(RM) -r $(BUILD_DIR)
 
--include $(OBJ:.o=.d)
+-include $(DEPS)
 
-.PHONY: all, clean
+MKDIR_P ?= mkdir -p

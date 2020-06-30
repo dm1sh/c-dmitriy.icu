@@ -1,17 +1,33 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <fcntl.h>
-#include <unistd.h>
+#include "../../include/netw_op/request.h"
+#include "../../include/utils_op/utils.h"
+#include "../../include/file_op/file.h"
+#include "../../include/file_op/mime.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
+/**
+ * @brief Send 404 response
+ * 
+ * @param fd 
+ * @param path 
+ */
+void res_404(int fd, char *path)
+{
+    FILE *fp = fopen("static/404.html", "r");
+    const ssize_t fsize = 512;
+    char buf[fsize], msg[fsize];
 
-#include "../include/request.h"
-#include "../include/utils.h"
-#include "../include/file.h"
-#include "../include/mime.h"
+    fread(buf, fsize, 1, fp);
+    fclose(fp);
+
+    sprintf(msg, buf, path, path);
+
+    struct header_s *header = gen_header(404, strlen(msg), "text/html");
+    send(fd, header->str, header->size - 1, 0);
+
+    send(fd, msg, strlen(msg), 0);
+    close(fd);
+
+    printf("404 ERROR\n");
+}
 
 /**
  * @brief Get the path object
@@ -21,8 +37,7 @@
  */
 char *get_path(char *request)
 {
-    char *tmp = strtok(request, " ");
-    char *path = strtok(NULL, " ");
+    char *path = strtok(request, " ");
 
     return path;
 }
@@ -67,6 +82,7 @@ int send_response(int fd, char *req_path)
     char *file_path = gen_file_path(req_path);
 
     struct file_s *file = get_file_info(file_path);
+
     if (file == NULL)
     {
         char *msg = "Server error";
@@ -79,15 +95,20 @@ int send_response(int fd, char *req_path)
 
         return 0;
     }
+
     if (file->fd < 0)
     {
-        char *msg = "<html>\n<body>404, Not Found. Return to home? <a href=\"/\">Home</a></body><html/>";
+        // char *msg = "<html>\n<body>404, Not Found. Return to home? <a href=\"/\">Home</a></body><html/>";
 
-        struct header_s *header = gen_header(404, strlen(msg), "text/html");
-        send(fd, header->str, header->size - 1, 0);
+        // struct header_s *header = gen_header(404, strlen(msg), "text/html");
+        // send(fd, header->str, header->size - 1, 0);
 
-        send(fd, msg, strlen(msg), 0);
-        close(fd);
+        // send(fd, msg, strlen(msg), 0);
+        // close(fd);
+
+        // printf("404 ERROR\n");
+
+        res_404(fd, req_path);
 
         return 0;
     }
@@ -95,8 +116,6 @@ int send_response(int fd, char *req_path)
     char *mime_type = get_mime_type(file_path);
 
     struct header_s *header = gen_header(200, file->size, mime_type);
-
-    printf("\n---\n%s\n%ld\n---\n", header->str, header->size);
 
     int rv = send(fd, header->str, header->size - 1, 0);
 
@@ -140,6 +159,15 @@ void handle_get_request(int fd, char *request)
 {
     char *path = get_path(request);
     printf("Client accessed path: %s\n", path);
+
+    if (strncmp(path, "/blog/", strlen("/blog/")) == 0)
+    {
+        char *id = (char *)malloc(strlen(path) - strlen("/blog/") + 1);
+        memmove(id, path + strlen("/blog/"), strlen(path) - strlen("/blog/") + 1);
+
+        printf("Blog post id = %s\n", id);
+    }
+    
 
     if (send_response(fd, path) < 0)
     {

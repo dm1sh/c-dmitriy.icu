@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    font-family: "alte_haas_grotesk_bold", "Helvetica Neue", Helvetica, Arial;
+}
+
+::selection {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+html {
+    min-height: 100vh;
+}
+
+body {
+    background-color: #ffffff;
+    border-top: solid 5px #000000;
+    padding: 45px;
+}
+
+header {
+    height: 65px;
+    margin-bottom: 20px;
+}
+
+header img {
+    height: 100%;
+}
+
+main h1 {
+    margin: 20px 0;
+}
+
+main li {
+    list-style-type: none;
+}
+
+li a {
+    color: #000000;
+    font-family: monospace;
+}
+
+li:hover a {
+    text-decoration: none;
+}
