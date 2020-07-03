@@ -168,7 +168,7 @@ void handle_get_request(int fd, char *request)
 
         
 
-        sprintf(msg, buff, articles_list_str, blogposts_list_str);
+        sprintf(msg, buff, articles_list_str);
 
         struct header_s *header = gen_header(200, strlen(msg), "text/html");
         send(fd, header->str, header->size - 1, 0);
