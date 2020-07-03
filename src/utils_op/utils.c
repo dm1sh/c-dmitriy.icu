@@ -17,14 +17,12 @@ void err_msg(char *msg)
  * @param str2 
  * @return char* 
  */
-char *add_to_front(char **str1, char *str2)
+char *concat_to_front(char **str1, char *str2)
 {
     char *tmp = strdup(*str1);
 
     strcpy(*str1, str2);
     strcat(*str1, tmp);
-
-    // free(tmp);
 
     return *str1;
 }

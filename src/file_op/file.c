@@ -25,7 +25,7 @@ char *gen_file_path(char *req_path)
     char *webroot = "static";
 
     path = realloc(path, strlen(path) + strlen(webroot));
-    path = add_to_front(&path, webroot);
+    path = concat_to_front(&path, webroot);
 
     return path;
 }

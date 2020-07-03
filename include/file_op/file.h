@@ -1,3 +1,6 @@
+#ifndef _FILE_H
+#define _FILE_H
+
 #include <string.h>
 #include <stdlib.h>
 #include <sys/sendfile.h>
@@ -15,3 +18,5 @@ struct file_s
 char *gen_file_path(char *path);
 int send_file(int cli_fd, struct file_s *file);
 struct file_s *get_file_info(char *file_path);
+
+#endif

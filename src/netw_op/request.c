@@ -2,6 +2,7 @@
 #include "../../include/utils_op/utils.h"
 #include "../../include/file_op/file.h"
 #include "../../include/file_op/mime.h"
+#include "../../include/db_op/db_cli.h"
 
 /**
  * @brief Send 404 response
@@ -13,12 +14,12 @@ void res_404(int fd, char *path)
 {
     FILE *fp = fopen("static/404.html", "r");
     const ssize_t fsize = 512;
-    char buf[fsize], msg[fsize];
+    char buff[fsize], msg[fsize];
 
-    fread(buf, fsize, 1, fp);
+    fread(buff, fsize, 1, fp);
     fclose(fp);
 
-    sprintf(msg, buf, path, path);
+    sprintf(msg, buff, path, path);
 
     struct header_s *header = gen_header(404, strlen(msg), "text/html");
     send(fd, header->str, header->size - 1, 0);
@@ -29,8 +30,21 @@ void res_404(int fd, char *path)
     printf("404 ERROR\n");
 }
 
+void res_500(int fd)
+{
+    char *msg = "Server error";
+
+    struct header_s *header = gen_header(500, sizeof(msg), "text/plain");
+    send(fd, header->str, header->size - 1, 0);
+
+    send(fd, msg, sizeof(msg), 0);
+    close(fd);
+
+    printf("500 ERROR\n");
+}
+
 /**
- * @brief Get the path object
+ * @brief Get the path string
  * 
  * @param request 
  * @return char* 
@@ -85,29 +99,13 @@ int send_response(int fd, char *req_path)
 
     if (file == NULL)
     {
-        char *msg = "Server error";
-
-        struct header_s *header = gen_header(500, sizeof(msg), "text/plain");
-        send(fd, header->str, header->size - 1, 0);
-
-        send(fd, msg, sizeof(msg), 0);
-        close(fd);
+        res_500(fd);
 
         return 0;
     }
 
     if (file->fd < 0)
     {
-        // char *msg = "<html>\n<body>404, Not Found. Return to home? <a href=\"/\">Home</a></body><html/>";
-
-        // struct header_s *header = gen_header(404, strlen(msg), "text/html");
-        // send(fd, header->str, header->size - 1, 0);
-
-        // send(fd, msg, strlen(msg), 0);
-        // close(fd);
-
-        // printf("404 ERROR\n");
-
         res_404(fd, req_path);
 
         return 0;
@@ -160,6 +158,29 @@ void handle_get_request(int fd, char *request)
     char *path = get_path(request);
     printf("Client accessed path: %s\n", path);
 
+    if (strcmp(path, "/") == 0)
+    {
+        FILE *fp = fopen("static/index.html", "r");
+        char buff[FILE_SIZE], msg[FILE_SIZE * 2], articles_list_str[FILE_SIZE / 2] = {0}, blogposts_list_str[FILE_SIZE / 2] = {0};
+
+        fread(buff, FILE_SIZE, 1, fp);
+        fclose(fp);
+
+        
+
+        sprintf(msg, buff, articles_list_str, blogposts_list_str);
+
+        struct header_s *header = gen_header(200, strlen(msg), "text/html");
+        send(fd, header->str, header->size - 1, 0);
+
+        send(fd, msg, strlen(msg), 0);
+        close(fd);
+
+        printf("Sent home page\n");
+
+        return;
+    }
+
     if (strncmp(path, "/blog/", strlen("/blog/")) == 0)
     {
         char *id = (char *)malloc(strlen(path) - strlen("/blog/") + 1);
@@ -167,7 +188,6 @@ void handle_get_request(int fd, char *request)
 
         printf("Blog post id = %s\n", id);
     }
-    
 
     if (send_response(fd, path) < 0)
     {

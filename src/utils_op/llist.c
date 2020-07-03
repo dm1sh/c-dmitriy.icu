@@ -1,13 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#define NUMBER 5
-
-typedef struct llist_s
-{
-    char *value;
-    struct llist_s *next;
-} llist_t;
+#include "../../include/utils_op/llist.h"
 
 /**
  * @brief Find item by number
@@ -41,7 +32,7 @@ void fill_with_arr(llist_t **list, char **arr, size_t n)
 }
 
 /**
- * @brief Print hole list
+ * @brief Print whole list
  * 
  * @param list 
  */
@@ -94,6 +85,7 @@ llist_t *add_to_list(llist_t **head, int pos, char *value)
     return current->next;
 }
 
+// Example of usage
 // int main()
 // {
 //     llist_t *head = malloc(sizeof(llist_t));

@@ -12,8 +12,24 @@
  * @param head_length 
  * @return int 
  */
-int open_db(char *file_name, char *type, FILE **file, char ***head, int *head_length)
+int open_db(char *file_name, types type, FILE **file, char ***head, int *head_length)
 {
+    char *type_string;
+    switch (type)
+    {
+    case BLOGPOST_T:
+        type_string = "blogpost";
+        break;
+
+    case ARTICLE_T:
+        type_string = "article";
+        break;
+
+    default:
+        err_msg("This type is not supported");
+        return -1;
+    }
+
     FILE *root_file;
     if ((root_file = fopen(file_name, "a+")) == NULL)
     {
@@ -25,8 +41,7 @@ int open_db(char *file_name, char *type, FILE **file, char ***head, int *head_le
     size_t size = LINE_SIZE;
 
     while (getline(&buff, &size, root_file) >= 0)
-    {
-        if (strcmp(type, strtok(buff, " ")) == 0)
+        if (strcmp(type_string, strtok(buff, " ")) == 0)
         {
             int ret = open_table(strtok(NULL, "\n"), file);
 
@@ -36,20 +51,19 @@ int open_db(char *file_name, char *type, FILE **file, char ***head, int *head_le
 
             return ret;
         }
-    }
+
+    free(buff);
 
     struct stat st = {0};
     if (stat("./db", &st) == -1)
-    {
         mkdir("./db", 0700);
-    }
 
-    int table_file_name_size = snprintf(NULL, 0, "./db/%s.csv", type) + 1;
+    int table_file_name_size = snprintf(NULL, 0, "./db/%s.csv", type_string) + 1;
     char *table_file_name = malloc(table_file_name_size);
-    snprintf(table_file_name, table_file_name_size, "./db/%s.csv", type);
+    snprintf(table_file_name, table_file_name_size, "./db/%s.csv", type_string);
 
     fseek(root_file, 0, SEEK_SET);
-    fprintf(root_file, "%s %s\n", type, table_file_name);
+    fprintf(root_file, "%s %s\n", type_string, table_file_name);
 
     fclose(root_file);
 
@@ -98,9 +112,7 @@ int read_head(FILE *file, char ***head)
     char *tok;
     int i = 0;
     for (tok = strtok(buff, ";"); tok && *tok; tok = strtok(NULL, ";"))
-    {
         insert_to_arr(head, length++, tok);
-    }
 
     return length;
 }
@@ -110,12 +122,11 @@ int read_head(FILE *file, char ***head)
  * 
  * @param file 
  * @param rec 
- * @param type 
  * @param n 
  * @param process_line 
  * @return int 
  */
-int get_entry(FILE *file, void **rec, int type, int n, int (*process_line)(char *, void **, int))
+int get_entry(FILE *file, entry_s *rec, int n, int (*process_line)(int, char *, entry_s *))
 {
     char *buff = NULL;
     int i = 0;
@@ -127,12 +138,14 @@ int get_entry(FILE *file, void **rec, int type, int n, int (*process_line)(char 
     {
         if (i == n)
         {
-            int res = (*process_line)(buff, rec, type);
+            int res = (*process_line)(n, buff, rec);
             return res;
         }
         else
             i++;
     }
+
+    free(buff);
 
     return -1;
 }
@@ -142,14 +155,13 @@ int get_entry(FILE *file, void **rec, int type, int n, int (*process_line)(char 
  * 
  * @param file 
  * @param rec 
- * @param type 
  * @param process_line 
  * @return int 
  */
-int append_table(FILE *file, void *rec, int type, char *(*process_line)(void *, int))
+int append_table(FILE *file, entry_s *rec, char *(*process_line)(entry_s *))
 {
     fseek(file, 0, SEEK_END);
-    char *buff = (*process_line)(rec, type);
+    char *buff = (*process_line)(rec);
 
     if (fprintf(file, "%s", buff) < 0)
         return -1;
@@ -189,9 +201,8 @@ int remove_entry(FILE *file, int n)
     while (getline(&buff, &size, file) >= 0)
     {
         if (i != n)
-        {
             fprintf(tmp_file, "%s", buff);
-        }
+
         i++;
     }
 
@@ -230,4 +241,42 @@ int remove_entry(FILE *file, int n)
     free(tmp_file_name);
 
     return i;
+}
+
+int read_whole_table(FILE *file, entry_s **entries, int (*process_line)(int ,char *, entry_s *))
+{
+    char *buff;
+    int i = 0;
+    size_t size = LINE_SIZE;
+
+    fseek(file, 0, SEEK_SET);
+
+    printf("Begining line-by-line reading\n");
+
+    while (getline(&buff, &size, file) >= 0)
+    {
+
+        if (i == 0)
+        {
+            i++;
+            continue;
+        }
+
+        printf("Read line [%d]: %s\n", i, buff);
+
+        int res = (*process_line)(i, buff, &((*entries)[i]));
+        if (res < 0)
+            return res;
+
+        i++;
+
+        printf("---%lu---\n", sizeof(entry_s));
+        *entries = (entry_s *)realloc(*entries, sizeof(entry_s) * i);
+    }
+    if (i == 1)
+        return -1;
+
+    free(buff);
+
+    return ++i;
 }

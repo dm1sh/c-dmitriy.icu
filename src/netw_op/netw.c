@@ -1,8 +1,6 @@
 #include "../../include/netw_op/netw.h"
 #include "../../include/utils_op/utils.h"
 
-#define BACKLOG 10
-
 /**
  * @brief Get the listener socket object
  * 

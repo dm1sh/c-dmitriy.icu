@@ -1,8 +1,6 @@
 #include "../../include/file_op/mime.h"
 #include "../../include/utils_op/utils.h"
 
-#define DEFAULT_mime_TYPE "application/octet-stream"
-
 /**
  * @brief Get the mime type of file
  * 
@@ -15,11 +13,10 @@ char *get_mime_type(char *file_path)
 
     if (ext == NULL)
     {
-        return DEFAULT_mime_TYPE;
+        return DEFAULT_MIME_TYPE;
     }
 
     ext++;
-
     ext = to_lower(ext);
 
     if (strcmp(ext, "html") == 0 || strcmp(ext, "htm") == 0)
@@ -59,5 +56,5 @@ char *get_mime_type(char *file_path)
         return "image/x-icon";
     }
 
-    return DEFAULT_mime_TYPE;
+    return DEFAULT_MIME_TYPE;
 }
