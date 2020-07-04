@@ -2,8 +2,7 @@
 
 int list_articles(article_info **articles)
 {
-    // FILE *file = fopen("./static/articles_list.db", "r");
-    FILE *file = fopen("./test_.db", "r");
+    FILE *file = fopen("./static/articles_list.db", "r");
     if (file == NULL)
     {
         perror("Couldn't open db file");
@@ -70,8 +69,7 @@ long get_article_contents(article_info *article)
         snprintf(name, line_length, "%ld", article->time);
     }
 
-    // snprintf(NULL, 0, "./static/articles/%s/%s.md", article->title, article->title);
-    int line_length = snprintf(NULL, 0, "./test_articles/%s/%s.md", name, name) + 1;
+    int line_length = snprintf(NULL, 0, "./static/articles/%s/%s.md", name, name) + 1;
     char *path = malloc(line_length);
     if (path == NULL)
     {
@@ -79,8 +77,7 @@ long get_article_contents(article_info *article)
         return -1;
     }
 
-    // snprintf(path, line_length, "./static/articles/%s/%s.md", article->title, article->title);
-    snprintf(path, line_length, "./test_articles/%s/%s.md", name, name);
+    snprintf(path, line_length, "./static/articles/%s/%s.md", name, name);
 
     FILE *file = fopen(path, "r");
     if (file == NULL)
@@ -102,62 +99,24 @@ long get_article_contents(article_info *article)
     return article->length;
 }
 
-int gen_html_article(article_info article, char **out)
-{
-    // FILE *template = fopen("./static/article.html", "r");
-    FILE *template = fopen("./test_article.html", "r");
-    if (template == NULL)
-    {
-        perror("Couldn't open article template");
-        *out = "500";
-        return -1;
-    }
+// /* Only for testing purposes */
+// int main()
+// {
+//     article_info *articles = malloc(0);
 
-    size_t template_size = get_file_size(template);
+//     int n = list_articles(&articles);
 
-    char *template_str = malloc(template_size + 1);
+//     printf("Read %d lines\n", n);
+//     printf("Last article's creation date is %ld and title is %s\n", articles[n - 1].time, articles[n - 1].title);
 
-    for (int i = 0; i < template_size; i++)
-        template_str[i] = fgetc(template);
-    template_str[template_size] = '\0';
+//     for (int i = 0; i < n; i++)
+//         get_article_contents(&(articles[i]));
 
-    *out = malloc(template_size + article.length + 1);
+//     printf("Got content of %d files\n", n);
 
-    char *content;
+//     char **html = malloc(sizeof(char *) * n);
+//     for (int i = 0; i < n; i++)
+//         gen_html_article(articles[i], &(html[i]));
 
-    process_md(article, &content);
-
-    int line_length = snprintf(NULL, 0, template_str, article.title, content) + 1;
-    *out = malloc(line_length);
-    if (*out == NULL)
-    {
-        *out = "500";
-        return -1;
-    }
-
-    snprintf(*out, line_length, template_str, article.title, content);
-
-    return line_length;
-}
-
-/* Only for testing purposes */
-int main()
-{
-    article_info *articles = malloc(0);
-
-    int n = list_articles(&articles);
-
-    printf("Read %d lines\n", n);
-    printf("Last article's creation date is %ld and title is %s\n", articles[n - 1].time, articles[n - 1].title);
-
-    for (int i = 0; i < n; i++)
-        get_article_contents(&(articles[i]));
-
-    printf("Got content of %d files\n", n);
-
-    char **html = malloc(sizeof(char *) * n);
-    for (int i = 0; i < n; i++)
-        gen_html_article(articles[i], &(html[i]));
-
-    return 0;
-}
+//     return 0;
+// }

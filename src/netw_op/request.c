@@ -2,7 +2,8 @@
 #include "../../include/utils_op/utils.h"
 #include "../../include/file_op/file.h"
 #include "../../include/file_op/mime.h"
-#include "../../include/db_op/db_cli.h"
+#include "../../include/articles_op/html.h"
+#include "../../include/articles_op/article.h"
 
 /**
  * @brief Send 404 response
@@ -34,10 +35,10 @@ void res_500(int fd)
 {
     char *msg = "Server error";
 
-    struct header_s *header = gen_header(500, sizeof(msg), "text/plain");
+    struct header_s *header = gen_header(500, strlen(msg), "text/plain");
     send(fd, header->str, header->size - 1, 0);
 
-    send(fd, msg, sizeof(msg), 0);
+    send(fd, msg, strlen(msg), 0);
     close(fd);
 
     printf("500 ERROR\n");
@@ -158,17 +159,41 @@ void handle_get_request(int fd, char *request)
     char *path = get_path(request);
     printf("Client accessed path: %s\n", path);
 
-    if (strcmp(path, "/") == 0)
+    if (strcmp(path, "/") == 0 || strcmp(path, "/index.html") == 0)
     {
         FILE *fp = fopen("static/index.html", "r");
-        char buff[FILE_SIZE], msg[FILE_SIZE * 2], articles_list_str[FILE_SIZE / 2] = {0}, blogposts_list_str[FILE_SIZE / 2] = {0};
+        if (fp == NULL)
+        {
+            res_404(fd, "/index.html");
+            return;
+        }
 
-        fread(buff, FILE_SIZE, 1, fp);
+        size_t file_size = get_file_size(fp) + 1;
+        char *template = malloc(file_size);
+
+        fread(template, file_size, 1, fp);
         fclose(fp);
 
-        
+        article_info *articles = malloc(0);
+        int amount = list_articles(&articles);
+        if (amount < 0)
+        {
+            res_500(fd);
+            return;
+        }
 
-        sprintf(msg, buff, articles_list_str);
+        char *articles_list_str;
+        gen_html_article_list(articles, amount, &articles_list_str);
+
+        int line_length = snprintf(NULL, 0, template, articles_list_str) + 1;
+        char *msg = malloc(line_length);
+        if (msg == NULL)
+        {
+            res_500(fd);
+            return;
+        }
+
+        snprintf(msg, line_length, template, articles_list_str);
 
         struct header_s *header = gen_header(200, strlen(msg), "text/html");
         send(fd, header->str, header->size - 1, 0);
@@ -181,12 +206,49 @@ void handle_get_request(int fd, char *request)
         return;
     }
 
-    if (strncmp(path, "/blog/", strlen("/blog/")) == 0)
+    if (strncmp(path, "/article/", strlen("/article/")) == 0)
     {
-        char *id = (char *)malloc(strlen(path) - strlen("/blog/") + 1);
-        memmove(id, path + strlen("/blog/"), strlen(path) - strlen("/blog/") + 1);
+        char *id_str = (char *)malloc(strlen(path) - strlen("/article/") + 1);
+        memmove(id_str, path + strlen("/article/"), strlen(path) - strlen("/article/") + 1);
 
-        printf("Blog post id = %s\n", id);
+        int id = strtol(id_str, NULL, 10);
+        if (id < 0)
+        {
+            res_404(fd, path);
+            return;
+        }
+
+        article_info *articles = malloc(0);
+        int amount = list_articles(&articles);
+        if (amount < 0)
+        {
+            res_500(fd);
+            return;
+        }
+
+        if (id > amount-1)
+        {
+            res_404(fd, path);
+            return;
+        }
+
+        get_article_contents(&(articles[id]));
+
+        char *html;
+        gen_html_article(articles[id], &html);
+
+        struct header_s *header = gen_header(200, strlen(html), "text/html");
+        send(fd, header->str, header->size - 1, 0);
+
+        send(fd, html, strlen(html), 0);
+        close(fd);
+
+        printf("Sent article with id=%d\n", id);
+
+        free(articles);
+        free(html);
+
+        return;
     }
 
     if (send_response(fd, path) < 0)

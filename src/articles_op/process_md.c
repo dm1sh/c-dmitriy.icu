@@ -202,7 +202,7 @@ int process_md(article_info article, char **out)
                 snprintf(append, append_line_length, "<img src=\"%s\" alt=\"%s\"> ", src, internal_text);
                 strcat(*out, append);
 
-                i += i + 2 + n + 2 + k + 1;
+                i += 2 + n + 2 + k + 1;
 
                 free(append);
                 free(src);
@@ -223,7 +223,7 @@ int process_md(article_info article, char **out)
                 int k = 0;
                 while (buff[i + 1 + n + 2 + k] != ')')
                     k++;
-                
+
                 char *internal_text = malloc(n + 1);
                 memcpy(internal_text, buff + i + 1, n);
                 internal_text[n] = '\0';
@@ -245,11 +245,13 @@ int process_md(article_info article, char **out)
                 snprintf(append, append_line_length, "<a href=\"%s\">%s</a> ", href, internal_text);
                 strcat(*out, append);
 
-                i += i + 1 + n + 2 + k + 1;
+                i += 1 + n + 2 + k + 1;
 
                 free(append);
                 free(href);
                 free(internal_text);
+
+                printf("++%d-%c++\n", i, buff[i]);
 
                 continue;
             }
@@ -264,6 +266,8 @@ int process_md(article_info article, char **out)
             *out = tmp_out;
             (*out)[len] = buff[i];
             (*out)[len + 1] = '\0';
+
+            printf("**%d-%c**\n", i, buff[i]);
         }
 
         tmp_out = realloc(*out, strlen(*out) + strlen("</p>") + 1);
@@ -290,8 +294,7 @@ int process_md(article_info article, char **out)
             (*out)[len + 1] = '\0';
         }
     }
-
-    printf("%s\n\n***\n", *out);
+    (*out)[strlen(*out) - 1] = '\0';
 
     return strlen(*out);
 }

@@ -26,4 +26,7 @@ typedef struct
 
 #endif
 
+int list_articles(article_info **articles);
+long get_article_contents(article_info *article);
+
 #endif

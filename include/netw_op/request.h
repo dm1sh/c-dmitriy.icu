@@ -11,8 +11,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#define FILE_SIZE 1024
-
 struct header_s {
     char * str;
     size_t size;
