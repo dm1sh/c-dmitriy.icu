@@ -25,7 +25,7 @@ int gen_html_article(article_info article, char **out)
 
     process_md(article, &content);
 
-    int line_length = snprintf(NULL, 0, template_str, article.title, content) + 1;
+    int line_length = snprintf(NULL, 0, template_str, article.title, article.title, content) + 1;
     *out = malloc(line_length);
     if (*out == NULL)
     {
@@ -33,7 +33,7 @@ int gen_html_article(article_info article, char **out)
         return -1;
     }
 
-    snprintf(*out, line_length, template_str, article.title, content);
+    snprintf(*out, line_length, template_str, article.title, article.title, content);
 
     free(template_str);
 

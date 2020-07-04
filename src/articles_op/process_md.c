@@ -11,20 +11,6 @@ int process_md(article_info article, char **out)
 
     while ((buff = strtok_r(rest, "\n", &rest)) != NULL)
     {
-
-        if (strcmp(buff, "***") == 0)
-        {
-            char *tmp_out = realloc(*out, strlen(*out) + strlen("<hr>\n") + 1);
-            if (tmp_out == NULL)
-            {
-                perror("Couldn't allocate memory for new element");
-                continue;
-            }
-            *out = tmp_out;
-            strcat(*out, "<hr>\n");
-            continue;
-        }
-
         if ((buff[0] == '*' && buff[1] == ' ') || (buff[0] == '-' && buff[1] == ' ') || (buff[0] == '+' && buff[1] == ' '))
         {
             char *begining = "";
@@ -52,7 +38,7 @@ int process_md(article_info article, char **out)
             free(append);
             continue;
         }
-
+        
         if (is_in_list)
         {
             char *tmp_out = realloc(*out, strlen(*out) + strlen("</ul>\n") + 1);
@@ -64,6 +50,19 @@ int process_md(article_info article, char **out)
             *out = tmp_out;
             strcat(*out, "</ul>\n");
             is_in_list = 0;
+        }
+
+        if (strcmp(buff, "***") == 0)
+        {
+            char *tmp_out = realloc(*out, strlen(*out) + strlen("<hr>\n") + 1);
+            if (tmp_out == NULL)
+            {
+                perror("Couldn't allocate memory for new element");
+                continue;
+            }
+            *out = tmp_out;
+            strcat(*out, "<hr>\n");
+            continue;
         }
 
         if (buff[0] == '#')
@@ -147,7 +146,7 @@ int process_md(article_info article, char **out)
                 memcpy(internal, buff + i + n, j);
                 internal[j] = '\0';
 
-                size_t append_line_length = snprintf(NULL, 0, "<%s>%s</%s> ", tag, internal, tag) + 1;
+                size_t append_line_length = snprintf(NULL, 0, "<%s>%s</%s>", tag, internal, tag) + 1;
                 char *append = malloc(append_line_length);
                 char *tmp_out = realloc(*out, strlen(*out) + append_line_length);
                 if (append == NULL || tmp_out == NULL)
@@ -157,10 +156,10 @@ int process_md(article_info article, char **out)
                 }
                 *out = tmp_out;
 
-                snprintf(append, append_line_length, "<%s>%s</%s> ", tag, internal, tag);
+                snprintf(append, append_line_length, "<%s>%s</%s>", tag, internal, tag);
                 strcat(*out, append);
 
-                i += n * 2 + j;
+                i += n * 2 + j - 1;
 
                 free(append);
                 free(internal);
@@ -189,7 +188,7 @@ int process_md(article_info article, char **out)
                 memcpy(src, buff + i + 2 + n + 2, k);
                 src[k] = '\0';
 
-                size_t append_line_length = snprintf(NULL, 0, "<img src=\"%s\" alt=\"%s\"> ", src, internal_text) + 1;
+                size_t append_line_length = snprintf(NULL, 0, "<a href=\"%s\"><img src=\"%s\" alt=\"%s\"></a>", src, src, internal_text) + 1;
                 char *append = malloc(append_line_length);
                 char *tmp_out = realloc(*out, strlen(*out) + append_line_length);
                 if (append == NULL || tmp_out == NULL)
@@ -199,10 +198,10 @@ int process_md(article_info article, char **out)
                 }
                 *out = tmp_out;
 
-                snprintf(append, append_line_length, "<img src=\"%s\" alt=\"%s\"> ", src, internal_text);
+                snprintf(append, append_line_length, "<a href=\"%s\"><img src=\"%s\" alt=\"%s\"></a>", src, src, internal_text);
                 strcat(*out, append);
 
-                i += 2 + n + 2 + k + 1;
+                i += 2 + n + 2 + k;
 
                 free(append);
                 free(src);
@@ -232,7 +231,7 @@ int process_md(article_info article, char **out)
                 memcpy(href, buff + i + 1 + n + 2, k);
                 href[k] = '\0';
 
-                size_t append_line_length = snprintf(NULL, 0, "<a href=\"%s\">%s</a> ", href, internal_text) + 1;
+                size_t append_line_length = snprintf(NULL, 0, "<a href=\"%s\">%s</a>", href, internal_text) + 1;
                 char *append = malloc(append_line_length);
                 char *tmp_out = realloc(*out, strlen(*out) + append_line_length);
                 if (append == NULL || tmp_out == NULL)
@@ -242,10 +241,10 @@ int process_md(article_info article, char **out)
                 }
                 *out = tmp_out;
 
-                snprintf(append, append_line_length, "<a href=\"%s\">%s</a> ", href, internal_text);
+                snprintf(append, append_line_length, "<a href=\"%s\">%s</a>", href, internal_text);
                 strcat(*out, append);
 
-                i += 1 + n + 2 + k + 1;
+                i += 1 + n + 2 + k;
 
                 free(append);
                 free(href);

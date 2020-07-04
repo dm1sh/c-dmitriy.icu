@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <title>Test</title>
 
     <link rel="stylesheet" href="style.css">
@@ -12,6 +13,8 @@
 <body>
     <header>
         <a href="/" id="logo"><img src="/logo.png" alt="logo" /></a>
+        <a id="modern" href="/modern"
+            title="If you have modern browser, you can visit more fancy version of my site">Modernize</a>
     </header>
     <main>
         <h1>Home</h1>
@@ -24,6 +27,29 @@
         <h1>Articles</h1>
         %s
     </main>
+    <style>
+        main h1 {
+            margin: 20px 0;
+        }
+
+        main ul {
+            padding-left: 0;
+        }
+
+        main li {
+            list-style-type: none;
+        }
+
+        main li,
+        main li a {
+            font-size: initial;
+            line-height: initial;
+        }
+
+        li:hover a {
+            text-decoration: none;
+        }
+    </style>
 </body>
 
 </html>

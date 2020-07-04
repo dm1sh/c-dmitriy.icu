@@ -211,8 +211,9 @@ void handle_get_request(int fd, char *request)
         char *id_str = (char *)malloc(strlen(path) - strlen("/article/") + 1);
         memmove(id_str, path + strlen("/article/"), strlen(path) - strlen("/article/") + 1);
 
-        int id = strtol(id_str, NULL, 10);
-        if (id < 0)
+        char *remaining;
+        int id = strtol(id_str, &remaining, 10);
+        if (id < 0 || strcmp(id_str, remaining) == 0)
         {
             res_404(fd, path);
             return;
