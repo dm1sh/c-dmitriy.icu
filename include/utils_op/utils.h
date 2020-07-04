@@ -10,5 +10,6 @@ void err_msg(char *msg);
 char *concat_to_front(char **str1, char *str2);
 char *get_status_message(int status_code);
 char *to_lower(char *str);
+char *trim(char *str);
 
 #endif

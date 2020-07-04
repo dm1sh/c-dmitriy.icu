@@ -66,3 +66,23 @@ char *to_lower(char *str)
 
     return str;
 }
+
+/**
+ * @brief Remove unneded spaces at the begining and ending of string
+ * 
+ * @param str 
+ * @return char* 
+ */
+char *trim(char *str)
+{
+    while (str[0] == ' ' || str[0] == '\n' || str[0] == '\t')
+    {
+        memmove(str, str + 1, strlen(str));
+    }
+    while (str[strlen(str) - 1] == ' ' || str[strlen(str) - 1] == '\n' || str[strlen(str) - 1] == '\t')
+    {
+        str[strlen(str) - 1] = '\0';
+    }
+
+    return str;
+}

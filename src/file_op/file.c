@@ -79,3 +79,18 @@ struct file_s *get_file_info(char *file_path)
 
     return file;
 }
+
+/**
+ * @brief Get the file size
+ * 
+ * @param file 
+ * @return size_t 
+ */
+size_t get_file_size(FILE *file)
+{
+    fseek(file, 0L, SEEK_END);
+    size_t size = ftell(file);
+    fseek(file, 0L, SEEK_SET);
+
+    return size;
+}
