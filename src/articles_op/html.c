@@ -1,5 +1,6 @@
 #include "../../include/articles_op/html.h"
 #include "../../include/articles_op/article.h"
+#include "../../include/utils_op/utils.h"
 
 int gen_html_article(article_info article, char **out)
 {
@@ -24,6 +25,8 @@ int gen_html_article(article_info article, char **out)
     char *content;
 
     process_md(article, &content);
+
+    article.title = repair_spaces(article.title);
 
     int line_length = snprintf(NULL, 0, template_str, article.title, article.title, content) + 1;
     *out = malloc(line_length);
@@ -53,6 +56,8 @@ int gen_html_article_list(article_info *articles, int n, char **out)
 
     for (int i = 0; i < n; i++)
     {
+        articles[i].title = repair_spaces(articles[i].title);
+
         int line_length = snprintf(NULL, 0, "<li><a href=\"/article/%d\" >%s</a></li>\n", i, articles[i].title) + 1;
 
         insert = malloc(line_length);

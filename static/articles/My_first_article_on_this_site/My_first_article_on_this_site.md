@@ -1,7 +1,7 @@
 # My first article on this site
 This is my own site written in pure C with templates in html and some css styles. All articles are stored in markdown format and are processed by server to convert them to html and send to client. Links list on the homepage is also generated dynamically to show all the articles, currntly avaliable on disk.
 
-![Data flow](https://c.imge.to/2020/07/03/P5RIaj.png)
+![Data flow](/articles/My_first_article_on_this_site/P5RIaj.png)
 *Data flow*
 
 As for all the pages of this site are pure html, it can be read from really old computers or text-based browsers. Server Side Rendered (SSR) webpages are also good for search engines.

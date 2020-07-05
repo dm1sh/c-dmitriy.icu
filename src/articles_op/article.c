@@ -2,7 +2,7 @@
 
 int list_articles(article_info **articles)
 {
-    FILE *file = fopen("./static/articles_list.db", "r");
+    FILE *file = fopen("./static/articles/list.db", "r");
     if (file == NULL)
     {
         perror("Couldn't open db file");

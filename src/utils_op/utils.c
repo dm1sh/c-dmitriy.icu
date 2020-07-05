@@ -86,3 +86,16 @@ char *trim(char *str)
 
     return str;
 }
+
+char *repair_spaces(char *str)
+{
+    for (int i = 0; i < strlen(str); i++)
+    {
+        if (str[i] == '_')
+        {
+            str[i] = ' ';
+        }
+    }
+
+    return str;
+}
