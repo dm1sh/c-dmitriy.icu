@@ -24,6 +24,8 @@ char *concat_to_front(char **str1, char *str2)
     strcpy(*str1, str2);
     strcat(*str1, tmp);
 
+    free(tmp);
+
     return *str1;
 }
 
@@ -98,4 +100,44 @@ char *repair_spaces(char *str)
     }
 
     return str;
+}
+
+/**
+ * @brief Gets the list of files and directories at the specified path
+ * 
+ * @param dir_list 
+ * @param path
+ * @return ssize_t 
+ */
+ssize_t get_dir_list(char ***dir_list, char *path)
+{
+    DIR *dir;
+    struct dirent *ent;
+
+    if ((dir = opendir(path)) == NULL)
+    {
+        perror("\nOpendir");
+        return -1;
+    }
+
+    ssize_t n = 0;
+    while ((ent = readdir(dir)) != NULL)
+    {
+        if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name, "..") == 0)
+            continue;
+
+        n++;
+        *dir_list = realloc(*dir_list, sizeof(char *) * n);
+        (*dir_list)[n - 1] = strdup(ent->d_name);
+
+        if (ent->d_type == DT_DIR)
+        {
+            (*dir_list)[n - 1] = realloc((*dir_list)[n - 1], strlen((*dir_list)[n - 1]) + 2);
+            (*dir_list)[n - 1] = strcat((*dir_list)[n - 1], "/");
+        }
+    }
+
+    closedir(dir);
+
+    return n;
 }

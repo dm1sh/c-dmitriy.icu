@@ -9,13 +9,12 @@
  */
 char *gen_file_path(char *req_path)
 {
-    char *path = (char *)malloc(strlen(req_path) + 1);
-    strcpy(path, req_path);
+    char *path = strdup(req_path);
     if (strchr(req_path, '.') == NULL)
     {
         if (req_path[strlen(req_path) - 1] != '/')
         {
-            path = realloc(path, strlen(path) + 1);
+            path = realloc(path, strlen(path) + 2);
             path = strcat(path, "/");
         }
         path = realloc(path, strlen(path) + strlen("index.html") + 1);
@@ -24,7 +23,7 @@ char *gen_file_path(char *req_path)
 
     char *webroot = "static";
 
-    path = realloc(path, strlen(path) + strlen(webroot));
+    path = realloc(path, strlen(path) + strlen(webroot) + 1);
     path = concat_to_front(&path, webroot);
 
     return path;
@@ -46,7 +45,6 @@ int send_file(int cli_fd, struct file_s *file)
     }
 
     close(file->fd);
-    free(file);
     return 0;
 }
 
@@ -58,7 +56,7 @@ int send_file(int cli_fd, struct file_s *file)
  */
 struct file_s *get_file_info(char *file_path)
 {
-    struct file_s *file = (struct file_s *)malloc(sizeof(struct file_s));
+    struct file_s *file = malloc(sizeof(struct file_s));
 
     if (file == NULL)
     {

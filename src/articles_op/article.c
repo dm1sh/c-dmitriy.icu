@@ -43,9 +43,11 @@ int list_articles(article_info **articles)
         if (strlen(rest) > 0)
             (*articles)[articles_amount - 1].title = strdup(rest);
         else
-            (*articles)[articles_amount - 1].title = "No title";
+            (*articles)[articles_amount - 1].title = strdup("No title");
 
-        printf("%ld - \"%s\"\n", (*articles)[articles_amount - 1].time, (*articles)[articles_amount - 1].title);
+        free(tmp);
+
+        // printf("Found article \"%s\" posted on %ld\n", (*articles)[articles_amount - 1].time, (*articles)[articles_amount - 1].title);
     }
 
     free(buff);
@@ -97,6 +99,17 @@ long get_article_contents(article_info *article)
     article->content[article->length] = '\0';
 
     return article->length;
+}
+
+void free_article_info_arr(article_info **articles, int length)
+{
+    for (int i = 0; i < length; i++)
+    {
+        free((*articles)[i].content);
+        free((*articles)[i].title);
+    }
+
+    free(*articles);
 }
 
 // /* Only for testing purposes */

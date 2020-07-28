@@ -250,8 +250,6 @@ int process_md(article_info article, char **out)
                 free(href);
                 free(internal_text);
 
-                printf("++%d-%c++\n", i, buff[i]);
-
                 continue;
             }
 
@@ -265,8 +263,6 @@ int process_md(article_info article, char **out)
             *out = tmp_out;
             (*out)[len] = buff[i];
             (*out)[len + 1] = '\0';
-
-            printf("**%d-%c**\n", i, buff[i]);
         }
 
         tmp_out = realloc(*out, strlen(*out) + strlen("</p>") + 1);

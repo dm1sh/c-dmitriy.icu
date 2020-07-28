@@ -1,4 +1,3 @@
-# My first article on this site
 This is my own site written in pure C with templates in html and some css styles. All articles are stored in markdown format and are processed by server to convert them to html and send to client. Links list on the homepage is also generated dynamically to show all the articles, currntly avaliable on disk.
 
 ![Data flow](/articles/My_first_article_on_this_site/P5RIaj.png)

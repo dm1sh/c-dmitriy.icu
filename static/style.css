@@ -34,7 +34,7 @@ header img {
     height: 100%;
 }
 
-header #modern {
+/* header #modern {
     line-height: 65px;
     text-align: center;
     vertical-align: top;
@@ -46,7 +46,7 @@ header #modern {
 header #modern:hover
 {
     text-decoration: none;
-}
+} */
 
 main {
     max-width: 800px;
