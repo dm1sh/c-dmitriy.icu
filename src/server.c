@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-        int listenfd = get_listener_socket(port);
+    int listenfd = get_listener_socket(port);
     if (listenfd < 0)
     {
         err_msg("!fatal! couldn't create listening socket");
