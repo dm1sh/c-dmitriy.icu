@@ -1,5 +1,5 @@
-#include "../../include/articles_op/html.h"
-#include "../../include/articles_op/article.h"
+#include "../../include/articles_p/html.h"
+#include "../../include/articles_p/article.h"
 #include "../../include/utils_op/utils.h"
 
 int gen_html_article(article_info article, char **out)
@@ -20,8 +20,6 @@ int gen_html_article(article_info article, char **out)
         template_str[i] = fgetc(template);
     template_str[template_size] = '\0';
 
-    *out = malloc(template_size + article.length + 1);
-
     char *content;
 
     process_md(article, &content);
@@ -38,7 +36,9 @@ int gen_html_article(article_info article, char **out)
 
     snprintf(*out, line_length, template_str, article.title, article.title, content);
 
+    fclose(template);
     free(template_str);
+    free(content);
 
     return line_length;
 }

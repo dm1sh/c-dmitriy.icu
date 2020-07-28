@@ -1,4 +1,4 @@
-#include "../../include/gallery_op/gallery.h"
+#include "../../include/gallery_p/gallery.h"
 #include "../../include/utils_op/utils.h"
 #include "../../include/file_op/file.h"
 #include "../../include/utils_op/arr.h"
@@ -12,7 +12,7 @@ gallery_t *get_album_list()
 {
     gallery_t *list = NULL, *curr = list;
 
-    char **albums_titles_list = calloc(0, sizeof(char *));
+    char **albums_titles_list = malloc(0);
 
     ssize_t albums_am = get_dir_list(&albums_titles_list, GALLERY_ROOT);
 
@@ -184,11 +184,13 @@ char *gen_gallery_html()
 
         free(album_content);
         free(album_html);
+        free(image_template);
 
         albums_list_item = albums_list_item->next;
     }
 
     free(album_template);
+    free(image_template);
 
     return gallery_content;
 }

@@ -2,9 +2,10 @@
 #include "../../include/utils_op/utils.h"
 #include "../../include/file_op/file.h"
 #include "../../include/file_op/mime.h"
-#include "../../include/articles_op/html.h"
-#include "../../include/articles_op/article.h"
-#include "../../include/gallery_op/gallery.h"
+#include "../../include/articles_p/html.h"
+#include "../../include/articles_p/article.h"
+#include "../../include/gallery_p/gallery.h"
+#include "../../include/projects_p/projects.h"
 
 /**
  * @brief Send 404 response
@@ -237,8 +238,11 @@ void handle_get_request(int fd, char *request)
         if (id < 0 || strcmp(id_str, remaining) == 0)
         {
             res_404(fd, path);
+
+            free(id_str);
             return;
         }
+        free(id_str);
 
         article_info *articles = malloc(0);
         int amount = list_articles(&articles);
@@ -256,7 +260,7 @@ void handle_get_request(int fd, char *request)
 
         get_article_contents(&(articles[id]));
 
-        char *html;
+        char *html = NULL;
         gen_html_article(articles[id], &html);
 
         struct header_s *header = gen_header(200, strlen(html), "text/html");
@@ -267,7 +271,10 @@ void handle_get_request(int fd, char *request)
 
         printf("Sent article with id=%d\n", id);
 
-        free(articles);
+        free(header->str);
+        free(header);
+
+        free_article_info_arr(&articles, amount);
         free(html);
 
         return;
@@ -300,9 +307,55 @@ void handle_get_request(int fd, char *request)
         send(fd, res_page, line_length, 0);
         close(fd);
 
+        printf("Sent gallery page\n");
+
+        free(header->str);
+        free(header);
+
         free(page_template);
         free(gallery_content);
         free(res_page);
+
+        return;
+    }
+
+    if (strcmp(path, "/projects") == 0 || strcmp(path, "/projects/") == 0)
+    {
+        FILE *page_template_fp = fopen("static/projects/index.html", "r");
+        if (page_template_fp == NULL)
+        {
+            res_404(fd, path);
+            return;
+        }
+
+        size_t page_file_size = get_file_size(page_template_fp) + 1;
+        char *page_template = calloc(1, page_file_size);
+
+        fread(page_template, page_file_size, 1, page_template_fp);
+        fclose(page_template_fp);
+
+        char *projects_content = gen_project_html();
+
+        size_t line_length = snprintf(NULL, 0, page_template, projects_content) + 1;
+        char *res_page = calloc(1, line_length);
+        sprintf(res_page, page_template, projects_content);
+
+        struct header_s *header = gen_header(200, line_length, "text/html");
+        send(fd, header->str, header->size - 1, 0);
+
+        send(fd, res_page, line_length, 0);
+        close(fd);
+
+        printf("Sent projects page\n");
+
+        free(header->str);
+        free(header);
+
+        free(page_template);
+        free(projects_content);
+        free(res_page);
+
+        return;
     }
 
     if (send_response(fd, path) < 0)

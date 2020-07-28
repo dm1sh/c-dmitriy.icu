@@ -1,4 +1,4 @@
-#include "../../include/articles_op/article.h"
+#include "../../include/articles_p/article.h"
 
 int list_articles(article_info **articles)
 {
@@ -50,6 +50,8 @@ int list_articles(article_info **articles)
         // printf("Found article \"%s\" posted on %ld\n", (*articles)[articles_amount - 1].time, (*articles)[articles_amount - 1].title);
     }
 
+    fclose(file);
+
     free(buff);
 
     return articles_amount;
@@ -61,6 +63,7 @@ long get_article_contents(article_info *article)
     if (strcmp(article->title, "No title") == 0)
     {
         int line_length = snprintf(NULL, 0, "%ld", article->time) + 1;
+        free(name);
         name = malloc(line_length);
         if (name == NULL)
         {
@@ -82,6 +85,7 @@ long get_article_contents(article_info *article)
     snprintf(path, line_length, "./static/articles/%s/%s.md", name, name);
 
     FILE *file = fopen(path, "r");
+    free(path);
     if (file == NULL)
     {
         perror("Couldn't open article file");
@@ -97,6 +101,9 @@ long get_article_contents(article_info *article)
         article->content[i] = fgetc(file);
 
     article->content[article->length] = '\0';
+
+    free(name);
+    fclose(file);
 
     return article->length;
 }

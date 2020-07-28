@@ -1,10 +1,10 @@
-#include "../../include/articles_op/process_md.h"
+#include "../../include/articles_p/process_md.h"
 
 int process_md(article_info article, char **out)
 {
     *out = malloc(1);
     (*out)[0] = '\0';
-    char *rest = strdup(article.content);
+    char *rest = strdup(article.content), *free_rest = rest;
     char *buff;
 
     int is_in_list = 0;
@@ -290,6 +290,8 @@ int process_md(article_info article, char **out)
         }
     }
     (*out)[strlen(*out) - 1] = '\0';
+
+    free(free_rest);
 
     return strlen(*out);
 }
