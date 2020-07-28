@@ -67,14 +67,20 @@ int main(int argc, char *argv[])
     struct sockaddr_storage cli_addr;
     char s[INET6_ADDRSTRLEN];
 
-    if (argc != 2)
+    char *port;
+
+    if (argc == 2)
+        port = argv[1];
+    else
+        port = getenv("PORT");
+
+    if (port == NULL)
     {
-        err_msg("Usage: <Server Port>\n");
+        perror("Port must be specified either as an argument or environment variable \"PORT\"");
         exit(1);
     }
-    char *port = argv[1];
 
-    int listenfd = get_listener_socket(port);
+        int listenfd = get_listener_socket(port);
     if (listenfd < 0)
     {
         err_msg("!fatal! couldn't create listening socket");
