@@ -1,0 +1,15 @@
+networks:
+  web:
+    external: true
+services:
+  c-dmitriy:
+    container_name: c-dmitriy
+    restart: unless-stopped
+    build: .
+    environment:
+      - PORT=8080
+    expose: 
+      - 8080
+    command: ./build/server 8080
+    networks:
+      - web
