@@ -6,10 +6,8 @@ services:
     container_name: c-dmitriy
     restart: unless-stopped
     build: .
-    environment:
-      - PORT=8080
     expose: 
-      - 8080
-    command: ./build/server 8080
+      - $PORT
+    command: ./build/server $PORT
     networks:
       - web

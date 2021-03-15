@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . /app
 
-EXPOSE 8080
+EXPOSE $PORT
 
 RUN apt update -y && apt install make clang -y
 
