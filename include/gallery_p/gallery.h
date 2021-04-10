@@ -22,7 +22,9 @@ typedef struct album_s
 
 gallery_t *get_album_list();
 gallery_t *new_album_item(char *title);
+void free_albums_list(gallery_t *albums_list);
 img_t new_img_item(char *path);
+void free_img_item(img_t img);
 int get_album_imgs(img_t **images_arr, int *size, char *title);
 char *gen_gallery_html();
 

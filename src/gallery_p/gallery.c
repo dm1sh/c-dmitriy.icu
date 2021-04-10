@@ -44,6 +44,27 @@ gallery_t *get_album_list()
 }
 
 /**
+ * @brief Free gallery_t structure
+ * 
+ * @return void
+ */
+void free_albums_list(gallery_t *albums_list)
+{
+    gallery_t *curr_item = albums_list;
+
+    while (curr_item != NULL)
+    {
+        free(curr_item->title);
+        for (int i = 0; i < curr_item->img_am; i++)
+            free_img_item(curr_item->images[i]);
+        free(curr_item->images);
+        curr_item = curr_item->next;
+    }
+
+    free(albums_list);
+}
+
+/**
  * @brief Generates new album item
  * 
  * @param title 
@@ -84,6 +105,18 @@ img_t new_img_item(char *path)
     img.tags = NULL;
 
     return img;
+}
+
+/**
+ * @brief Free img_t structure
+ * 
+ * @return void
+ */
+void free_img_item(img_t img)
+{
+    free(img.description);
+    free(img.path);
+    free(img.tags);
 }
 
 int get_album_imgs(img_t **images_arr, int *size, char *title)
@@ -135,7 +168,8 @@ char *gen_gallery_html()
     fread(image_template, image_file_size, 1, image_template_fp);
     fclose(image_template_fp);
 
-    gallery_t *albums_list_item = get_album_list();
+    gallery_t *albums_list = get_album_list();
+    gallery_t *albums_list_item = albums_list;
 
     char *gallery_content = strdup("");
 
@@ -190,7 +224,7 @@ char *gen_gallery_html()
     }
 
     free(album_template);
-    free(image_template);
+    free_albums_list(albums_list);
 
     return gallery_content;
 }
