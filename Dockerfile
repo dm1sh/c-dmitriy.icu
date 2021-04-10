@@ -1,11 +1,17 @@
-FROM ubuntu:18.04
+FROM heroku/heroku:20-build as builder
 
 WORKDIR /app
 
-COPY . /app
+COPY . .
 
-RUN apt update -y && apt install make clang -y
+RUN make
 
-RUN make 
+FROM heroku/heroku:20
 
-CMD ["./build/server", "$PORT"]
+WORKDIR /srv
+
+COPY --from=builder /app .
+
+RUN echo 5000
+
+CMD ["./build/server", "5000"]
