@@ -7,9 +7,14 @@
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
+:root {
+  --background: #ffffff;
+  --accent: #000000;
+}
+
 ::selection {
-  background-color: #000000;
-  color: #ffffff;
+  background-color: var(--accent);
+  color: var(--background);
 }
 
 html,
@@ -18,14 +23,15 @@ body {
 }
 
 body {
-  background-color: #ffffff;
-  border-top: solid 5px #000000;
+  background-color: var(--background);
+  border-top: solid 5px var(--accent);
   padding: 45px;
+  color: var(--accent)
 }
 
 a {
   font-family: monospace;
-  color: #000000;
+  color: var(--accent);
 }
 
 header {
@@ -41,7 +47,7 @@ header img {
   display: block;
   height: 65px;
   width: 65px;
-  background-color: #000000;
+  background-color: var(--accent);
 }
 
 /* header #modern {
@@ -50,7 +56,7 @@ header img {
     vertical-align: top;
     margin-left: 30px;
     font-size: 18px;
-    color: #000000;
+    color: var(--accent);
     font-family: monospace;
 }
 header #modern:hover
@@ -88,10 +94,11 @@ main a:hover {
 main blockquote {
   margin-left: 20px;
   padding-left: 10px;
-  border-left: #000000 solid 5px;
+  border-left: var(--accent) solid 5px;
 }
 
-main details, main summary {
+main details,
+main summary {
   outline: none;
 }
 
@@ -110,4 +117,11 @@ main > #header {
 
 ul ul > li {
   margin-left: 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #000000;
+    --accent: #ffffff;
+  }
 }
