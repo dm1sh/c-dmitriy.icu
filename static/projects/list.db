@@ -1,3 +1,12 @@
-Mshell;A simple yet comfortable UNIX shell;C;MIT License;https://github.com/Dm1tr1y147/mshell
+KGS_LeaderBoard;Leaderboard application for KGS Go server;TypeScript;MIT License;https://github.com/SSH-KK/KGS_LeaderBoard
+timetable-generator;Application for sheduling classes;TypeScript;None;https://github.com/SSH-KK/timetable-generator
+mshell;A simple yet comfortable UNIX shell;C;MIT License;https://github.com/Dm1tr1y147/mshell
+questionForm;Online polls;TypeScript;MIT License;https://github.com/dm1sh/questionForm
+react-eventful-calendar;React calendar component;TypeScript;MIT License;https://github.com/dm1sh/react-eventful-calendar
+school_documents;School documents (seminars and homeworks) archive;TypeScript;None;https://github.com/SSH-KK/school_documents
+hackathon2020_komap;Service for making routes;TypeScript;None;https://github.com/SSH-KK/hackathon2020_komap
+eserver;Simple express-like webserver;TypeScript;None;https://github.com/dm1sh/eserver
 thetriangle;A simple program for drawing triangles;C;None;https://github.com/Dm1tr1y147/thetriangle
+textEbitor;Text editor in C;C;None;https://github.com/dm1sh/textEbitor
 md_offliner;Tool for uploading articles to the server;Lua;MIT License;https://github.com/Dm1tr1y147/md_offliner
+ctest;Mostly specialized on unit tests library for improved testing experience;C;MIT License;https://github.com/dm1sh/ctest
