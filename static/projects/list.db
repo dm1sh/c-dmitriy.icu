@@ -7,6 +7,7 @@ school_documents;School documents (seminars and homeworks) archive;TypeScript;No
 hackathon2020_komap;Service for making routes;TypeScript;None;https://github.com/SSH-KK/hackathon2020_komap
 eserver;Simple express-like webserver;TypeScript;None;https://github.com/dm1sh/eserver
 stack_vm;Stack based virtual machine and assembly code compiler;C;MIT Licence;https://github.com/dm1sh/stack_vm
+conways_game;Conway's game implementation in js;TypeScript;MIT Licence;https://github.com/dm1sh/conways_game
 thetriangle;A simple program for drawing triangles;C;None;https://github.com/Dm1tr1y147/thetriangle
 textEbitor;Text editor in C;C;None;https://github.com/dm1sh/textEbitor
 md_offliner;Tool for uploading articles to the server;Lua;MIT License;https://github.com/Dm1tr1y147/md_offliner
