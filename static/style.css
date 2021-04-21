@@ -17,11 +17,6 @@
   color: var(--background);
 }
 
-html,
-body {
-  height: 100%;
-}
-
 body {
   background-color: var(--background);
   border-top: solid 5px var(--accent);
