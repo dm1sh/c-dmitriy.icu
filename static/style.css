@@ -21,7 +21,7 @@ body {
   background-color: var(--background);
   border-top: solid 5px var(--accent);
   padding: 45px;
-  color: var(--accent)
+  color: var(--accent);
 }
 
 a {
