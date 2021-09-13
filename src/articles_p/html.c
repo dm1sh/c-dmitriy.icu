@@ -71,12 +71,12 @@ int gen_html_article_list(article_info *articles, int n, char **out)
         snprintf(insert, line_length, "<li><a href=\"/article/%d\" >%s</a></li>\n", i, articles[i].title);
 
         strcat(*out, insert);
+
+        free(insert);
     }
 
     *out = realloc(*out, strlen(*out) + strlen("</ul>") + 1);
     strcat(*out, "</ul>");
-
-    free(insert);
 
     return 0;
 }

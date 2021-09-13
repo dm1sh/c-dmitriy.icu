@@ -187,6 +187,7 @@ void handle_get_request(int fd, char *request)
 
         fread(template, file_size, 1, fp);
         fclose(fp);
+        template[file_size-1] = '\0';
 
         article_info *articles = malloc(0);
         int amount = list_articles(&articles);

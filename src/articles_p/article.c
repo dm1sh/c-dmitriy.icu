@@ -45,6 +45,8 @@ int list_articles(article_info **articles)
         else
             (*articles)[articles_amount - 1].title = strdup("No title");
 
+        (*articles)[articles_amount - 1].content = malloc(0);
+
         free(tmp);
 
         // printf("Found article \"%s\" posted on %ld\n", (*articles)[articles_amount - 1].time, (*articles)[articles_amount - 1].title);
@@ -67,7 +69,7 @@ long get_article_contents(article_info *article)
         name = malloc(line_length);
         if (name == NULL)
         {
-            article->content = "500";
+            article->content = strdup("500");
             return -1;
         }
 
@@ -78,7 +80,7 @@ long get_article_contents(article_info *article)
     char *path = malloc(line_length);
     if (path == NULL)
     {
-        article->content = "500";
+        article->content = strdup("500");
         return -1;
     }
 
@@ -89,7 +91,7 @@ long get_article_contents(article_info *article)
     if (file == NULL)
     {
         perror("Couldn't open article file");
-        article->content = "404";
+        article->content = strdup("404");
         return -1;
     }
 
@@ -112,8 +114,8 @@ void free_article_info_arr(article_info **articles, int length)
 {
     for (int i = 0; i < length; i++)
     {
-        free((*articles)[i].content);
         free((*articles)[i].title);
+        free((*articles)[i].content);
     }
 
     free(*articles);
