@@ -1,4 +1,6 @@
-FROM heroku/heroku:20-build as builder
+FROM alpine as builder
+
+RUN apk add --no-cache build-base
 
 WORKDIR /app
 
@@ -6,12 +8,12 @@ COPY . .
 
 RUN make
 
-FROM heroku/heroku:20
+FROM alpine
 
 WORKDIR /srv
 
 COPY --from=builder /app .
 
-RUN echo 5000
+RUN apk add --no-cache gcompat
 
-CMD ["./build/server", "5000"]
+CMD ["build/server", "5000"]
