@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -59,9 +60,20 @@ void handle_connection(int fd)
     close(fd);
 }
 
+/**
+ * @brief Handles child process removal (to prevent zombies)
+ *
+ * @param signum 
+ */
 void handle_process_termination(int signum)
 {
-    wait(NULL);
+    int status;
+    pid_t pid;
+
+    do {
+	    pid = waitpid(-1, &status, WNOHANG);
+    }
+    while (pid > 0);
 }
 
 /**
@@ -94,6 +106,8 @@ int main(int argc, char *argv[])
     }
     printf("Waiting for connection on port %s...\n", port);
 
+    signal(SIGCHLD, handle_process_termination);
+
     while (1)
     {
         socklen_t sin_size = sizeof cli_addr;
@@ -122,10 +136,8 @@ int main(int argc, char *argv[])
             handle_connection(client_fd);
             exit(0);
         }
-        else {
+        else
             close(client_fd);
-            signal(SIGCHLD, handle_process_termination);
-        }
     }
 
     return 0;
