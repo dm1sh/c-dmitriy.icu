@@ -58,6 +58,11 @@ void handle_connection(int fd)
     close(fd);
 }
 
+void handle_process_termination(int signum)
+{
+    wait(NULL);
+}
+
 /**
   * Main
   */
@@ -116,8 +121,10 @@ int main(int argc, char *argv[])
             handle_connection(client_fd);
             exit(0);
         }
-        else
+        else {
             close(client_fd);
+            signal(SIGCHLD, handle_process_termination);
+        }
     }
 
     return 0;
